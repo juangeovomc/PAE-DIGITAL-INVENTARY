@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#3498db">
+    <title>SISTEMA DE INVENTARIO PAE DIGITAL</title>
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            position: relative;
+            padding-left: 100px;
+            padding-right: 100px;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header-logo {
+            position: absolute;
+            top: 15px;
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+        }
+        .header-logo-left { left: 15px; }
+        .header-logo-right { right: 15px; }
+        
+        .main-content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .inventory-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .inventory-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .inventory-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: transform 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .summary-card i {
+            font-size: 2em;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .summary-card h3 {
+            color: #495057;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .summary-card p {
+            color: #2c3e50;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .inventory-list h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .items-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            min-height: 200px;
+        }
+        
+        .history-section {
+            grid-column: 1 / -1;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .history-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .history-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .history-filters select {
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            max-width: 200px;
+        }
+        
+        .history-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            min-height: 300px;
+        }
+        
+        .product-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .movement-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .movement-item.salida {
+            border-left-color: #e74c3c;
+        }
+        
+        .movement-date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .movement-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .movement-type.entrada {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .movement-type.salida {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+        
+        .autocomplete-container {
+            position: relative;
+        }
+        
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .suggestion-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f8f9fa;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-item.selected {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .suggestion-item .product-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .suggestion-item .product-stock {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 4px;
+        }
+        
+        .suggestion-item .new-product {
+            color: #27ae60;
+            font-style: italic;
+        }
+        
+        /* Estilos para el sistema de pestañas */
+        .tabs-container {
+            width: 100%;
+        }
+        
+        .tabs-header {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: #e9ecef;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border-right: 1px solid #dee2e6;
+        }
+        
+        .tab-button:last-child {
+            border-right: none;
+        }
+        
+        .tab-button:hover {
+            background: #dee2e6;
+            color: #495057;
+        }
+        
+        .tab-button.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 0 0 10px 10px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Estilos para reportes */
+        .reports-container {
+            padding: 30px;
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .report-filters {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .report-filters select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 180px;
+        }
+        
+        .report-filters input[type="month"] {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .report-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .report-card h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 18px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .report-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .top-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .top-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .top-item .product-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .top-item .product-count {
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .sede-activity {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .sede-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .sede-item .sede-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .sede-item .sede-count {
+            background: #27ae60;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .report-details {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .report-details h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 18px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .report-movements {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .report-movement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .report-movement-item.entrada {
+            border-left-color: #27ae60;
+        }
+        
+        .report-movement-info {
+            flex: 1;
+        }
+        
+        .report-movement-product {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .report-movement-details {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .report-movement-quantity {
+            font-weight: bold;
+            color: #3498db;
+            font-size: 18px;
+        }
+        
+        /* Botón de advertencia */
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+        
+        /* Responsive Design para diferentes dispositivos */
+        
+        /* Tablets (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 2em;
+            }
+            
+            .main-content {
+                padding: 20px;
+                gap: 20px;
+            }
+            
+            .inventory-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .history-filters {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .history-filters select {
+                min-width: 150px;
+            }
+        }
+        
+        /* Tablets pequeñas y móviles grandes (600px - 768px) */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 5px;
+                border-radius: 8px;
+            }
+            
+            header {
+                padding: 15px;
+            }
+            
+            header h1 { font-size: 1.8em; }
+            .header-logo { width: 48px; height: 48px; top: 10px; }
+            header { padding-left: 70px; padding-right: 70px; }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .inventory-summary {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .summary-card {
+                padding: 15px;
+            }
+            
+            .summary-card i {
+                font-size: 1.5em;
+            }
+            
+            .summary-card h3 {
+                font-size: 0.8em;
+            }
+            
+            .summary-card p {
+                font-size: 1.3em;
+            }
+            
+            .form-section,
+            .inventory-section,
+            .history-section {
+                padding: 20px;
+            }
+            
+            .history-filters {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .history-filters select,
+            .history-filters .btn {
+                max-width: none;
+                width: 100%;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            input, select, textarea {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .suggestions-dropdown {
+                max-height: 150px;
+            }
+            
+            .suggestion-item {
+                padding: 10px;
+            }
+        }
+        
+        /* Móviles pequeños (400px - 600px) */
+        @media (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                margin: 2px;
+                border-radius: 6px;
+            }
+            
+            header {
+                padding: 12px;
+            }
+            
+            header h1 {
+                font-size: 1.5em;
+            }
+            
+            header p {
+                font-size: 0.9em;
+            }
+            
+            .main-content {
+                padding: 12px;
+                gap: 12px;
+            }
+            
+            .form-section,
+            .inventory-section,
+            .history-section {
+                padding: 15px;
+            }
+            
+            .form-section h2,
+            .inventory-section h2,
+            .history-section h2 {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+            }
+            
+            .inventory-list h3 {
+                font-size: 1.1em;
+            }
+            
+            .summary-card {
+                padding: 12px;
+            }
+            
+            .summary-card i {
+                font-size: 1.3em;
+            }
+            
+            .summary-card h3 {
+                font-size: 0.75em;
+            }
+            
+            .summary-card p {
+                font-size: 1.2em;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            
+            input, select, textarea {
+                padding: 8px;
+                font-size: 13px;
+            }
+            
+            .suggestions-dropdown {
+                max-height: 120px;
+            }
+            
+            .suggestion-item {
+                padding: 8px;
+                font-size: 13px;
+            }
+            
+            .movement-item,
+            .product-item {
+                padding: 12px;
+                margin-bottom: 8px;
+            }
+            
+            .movement-date {
+                font-size: 0.8em;
+            }
+            
+            .movement-type {
+                font-size: 0.7em;
+                padding: 3px 6px;
+            }
+        }
+        
+        /* Móviles muy pequeños (menos de 400px) */
+        @media (max-width: 400px) {
+            header h1 {
+                font-size: 1.3em;
+            }
+            .header-logo { width: 40px; height: 40px; top: 8px; }
+            header { padding-left: 60px; padding-right: 60px; }
+            
+            header p {
+                font-size: 0.8em;
+            }
+            
+            .form-section h2,
+            .inventory-section h2,
+            .history-section h2 {
+                font-size: 1.2em;
+            }
+            
+            .summary-card {
+                padding: 10px;
+            }
+            
+            .summary-card i {
+                font-size: 1.2em;
+            }
+            
+            .summary-card h3 {
+                font-size: 0.7em;
+            }
+            
+            .summary-card p {
+                font-size: 1.1em;
+            }
+            
+            .btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            
+            input, select, textarea {
+                padding: 6px;
+                font-size: 12px;
+            }
+            
+            .suggestions-dropdown {
+                max-height: 100px;
+            }
+            
+            .suggestion-item {
+                padding: 6px;
+                font-size: 12px;
+            }
+            
+            /* Pestañas en móviles pequeños */
+            .tab-button {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .reports-container {
+                padding: 15px;
+            }
+            
+            .report-summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .report-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Orientación landscape en móviles */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .main-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .history-section {
+                grid-column: 1 / -1;
+            }
+            
+            .inventory-summary {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Pantallas muy grandes (más de 1400px) */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            
+            .form-section {
+                grid-column: 1;
+            }
+            
+            .inventory-section {
+                grid-column: 2;
+            }
+            
+            .history-section {
+                grid-column: 3;
+            }
+            
+            .inventory-summary {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Mejoras de accesibilidad para dispositivos táctiles */
+        @media (hover: none) and (pointer: coarse) {
+            .btn:hover {
+                transform: none;
+            }
+            
+            .summary-card:hover {
+                transform: none;
+            }
+            
+            .suggestion-item {
+                min-height: 44px; /* Tamaño mínimo recomendado para touch */
+            }
+            
+            .btn {
+                min-height: 44px;
+            }
+            
+            input, select, textarea {
+                min-height: 44px;
+            }
+        }
+        
+        /* Optimizaciones específicas para iOS */
+        @supports (-webkit-touch-callout: none) {
+            input, select, textarea {
+                -webkit-appearance: none;
+                border-radius: 8px;
+            }
+            
+            select {
+                background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 12px center;
+                padding-right: 40px;
+            }
+        }
+        
+        /* Optimizaciones para Android */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            input, select, textarea {
+                font-size: 16px; /* Evita zoom en Android */
+            }
+        }
+        
+        /* Mejoras para pantallas de alta densidad */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .btn, input, select, textarea {
+                border-width: 1px;
+            }
+        }
+        
+        /* Soporte para modo oscuro del sistema y manual */
+        @media (prefers-color-scheme: dark) {
+            body:not(.tema-claro) {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+            
+            body:not(.tema-claro) .container {
+                background: #1a1a1a;
+                color: #ffffff;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            }
+            
+            body:not(.tema-claro) header {
+                background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+                color: white;
+            }
+            
+            body:not(.tema-claro) .form-section,
+            body:not(.tema-claro) .inventory-section,
+            body:not(.tema-claro) .history-section {
+                background: #2d2d2d;
+                border-color: #404040;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .form-section h2,
+            body:not(.tema-claro) .inventory-section h2,
+            body:not(.tema-claro) .history-section h2 {
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .summary-card,
+            body:not(.tema-claro) .items-container,
+            body:not(.tema-claro) .history-container,
+            body:not(.tema-claro) .suggestions-dropdown {
+                background: #333333;
+                border-color: #404040;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .summary-card h3 {
+                color: #e0e0e0;
+            }
+            
+            body:not(.tema-claro) .summary-card p {
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) input, 
+            body:not(.tema-claro) select, 
+            body:not(.tema-claro) textarea {
+                background: #404040;
+                border-color: #555555;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) input:focus, 
+            body:not(.tema-claro) select:focus, 
+            body:not(.tema-claro) textarea:focus {
+                border-color: #3498db;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            }
+            
+            body:not(.tema-claro) input::placeholder, 
+            body:not(.tema-claro) textarea::placeholder {
+                color: #b0b0b0;
+            }
+            
+            body:not(.tema-claro) .suggestion-item {
+                background: #333333;
+                color: #ffffff;
+                border-bottom-color: #404040;
+            }
+            
+            body:not(.tema-claro) .suggestion-item:hover {
+                background-color: #404040;
+            }
+            
+            body:not(.tema-claro) .suggestion-item.selected {
+                background-color: #1e3a8a;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .suggestion-item .product-name {
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .suggestion-item .product-stock {
+                color: #b0b0b0;
+            }
+            
+            body:not(.tema-claro) .suggestion-item .new-product {
+                color: #4ade80;
+            }
+            
+            body:not(.tema-claro) .movement-item,
+            body:not(.tema-claro) .product-item {
+                background: #333333;
+                color: #ffffff;
+                border-left-color: #3498db;
+            }
+            
+            body:not(.tema-claro) .movement-item.salida {
+                border-left-color: #e74c3c;
+            }
+            
+            body:not(.tema-claro) .movement-date {
+                color: #b0b0b0;
+            }
+            
+            body:not(.tema-claro) .movement-type.entrada {
+                background: #1a4d2e;
+                color: #4ade80;
+            }
+            
+            body:not(.tema-claro) .movement-type.salida {
+                background: #4d1a1a;
+                color: #f87171;
+            }
+            
+            /* Pestañas en modo oscuro */
+            body:not(.tema-claro) .tabs-header {
+                background: #2d2d2d;
+            }
+            
+            body:not(.tema-claro) .tab-button {
+                background: #404040;
+                color: #b0b0b0;
+                border-right-color: #555555;
+            }
+            
+            body:not(.tema-claro) .tab-button:hover {
+                background: #555555;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .tab-button.active {
+                background: #3498db;
+                color: white;
+            }
+            
+            body:not(.tema-claro) .tab-content {
+                background: #1a1a1a;
+                border-color: #404040;
+            }
+            
+            /* Reportes en modo oscuro */
+            body:not(.tema-claro) .reports-container {
+                background: #1a1a1a;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .report-card {
+                background: #333333;
+                border-color: #404040;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .report-card h3 {
+                color: #ffffff;
+                border-bottom-color: #3498db;
+            }
+            
+            body:not(.tema-claro) .stat-item {
+                background: #404040;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .stat-label {
+                color: #e0e0e0;
+            }
+            
+            body:not(.tema-claro) .stat-value {
+                color: #3498db;
+            }
+            
+            body:not(.tema-claro) .top-item,
+            body:not(.tema-claro) .sede-item {
+                background: #404040;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .top-item .product-name,
+            body:not(.tema-claro) .sede-item .sede-name {
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .top-item .product-count {
+                background: #3498db;
+                color: white;
+            }
+            
+            body:not(.tema-claro) .sede-item .sede-count {
+                background: #27ae60;
+                color: white;
+            }
+            
+            body:not(.tema-claro) .report-details {
+                background: #333333;
+                border-color: #404040;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .report-details h3 {
+                color: #ffffff;
+                border-bottom-color: #3498db;
+            }
+            
+            body:not(.tema-claro) .report-movement-item {
+                background: #404040;
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .report-movement-item.entrada {
+                border-left-color: #27ae60;
+            }
+            
+            body:not(.tema-claro) .report-movement-product {
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .report-movement-details {
+                color: #b0b0b0;
+            }
+            
+            body:not(.tema-claro) .report-movement-quantity {
+                color: #3498db;
+            }
+            
+            /* Labels en modo oscuro */
+            body:not(.tema-claro) label {
+                color: #e0e0e0;
+            }
+            
+            /* Mensajes de estado en modo oscuro */
+            body:not(.tema-claro) #sync-status {
+                color: #ffffff;
+            }
+            
+            /* Botones en modo oscuro */
+            body:not(.tema-claro) .btn {
+                color: #ffffff;
+            }
+            
+            body:not(.tema-claro) .btn-danger {
+                background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            }
+            
+            body:not(.tema-claro) .btn-warning {
+                background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            }
+        }
+
+        /* Modo oscuro manual */
+        body.tema-oscuro {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+        }
+        
+        body.tema-oscuro .container {
+            background: #1a1a1a !important;
+            color: #ffffff !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+        }
+        
+        body.tema-oscuro header {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%) !important;
+            color: white !important;
+        }
+        
+        body.tema-oscuro .form-section,
+        body.tema-oscuro .inventory-section,
+        body.tema-oscuro .history-section {
+            background: #2d2d2d !important;
+            border-color: #404040 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .form-section h2,
+        body.tema-oscuro .inventory-section h2,
+        body.tema-oscuro .history-section h2 {
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .summary-card,
+        body.tema-oscuro .items-container,
+        body.tema-oscuro .history-container,
+        body.tema-oscuro .suggestions-dropdown {
+            background: #333333 !important;
+            border-color: #404040 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .summary-card h3 {
+            color: #e0e0e0 !important;
+        }
+        
+        body.tema-oscuro .summary-card p {
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro input, 
+        body.tema-oscuro select, 
+        body.tema-oscuro textarea {
+            background: #404040 !important;
+            border-color: #555555 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro input:focus, 
+        body.tema-oscuro select:focus, 
+        body.tema-oscuro textarea:focus {
+            border-color: #3498db !important;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2) !important;
+        }
+        
+        body.tema-oscuro input::placeholder, 
+        body.tema-oscuro textarea::placeholder {
+            color: #b0b0b0 !important;
+        }
+        
+        body.tema-oscuro .suggestion-item {
+            background: #333333 !important;
+            color: #ffffff !important;
+            border-bottom-color: #404040 !important;
+        }
+        
+        body.tema-oscuro .suggestion-item:hover {
+            background-color: #404040 !important;
+        }
+        
+        body.tema-oscuro .suggestion-item.selected {
+            background-color: #1e3a8a !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .suggestion-item .product-name {
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .suggestion-item .product-stock {
+            color: #b0b0b0 !important;
+        }
+        
+        body.tema-oscuro .suggestion-item .new-product {
+            color: #4ade80 !important;
+        }
+        
+        body.tema-oscuro .movement-item,
+        body.tema-oscuro .product-item {
+            background: #333333 !important;
+            color: #ffffff !important;
+            border-left-color: #3498db !important;
+        }
+        
+        body.tema-oscuro .movement-item.salida {
+            border-left-color: #e74c3c !important;
+        }
+        
+        body.tema-oscuro .movement-date {
+            color: #b0b0b0 !important;
+        }
+        
+        body.tema-oscuro .movement-type.entrada {
+            background: #1a4d2e !important;
+            color: #4ade80 !important;
+        }
+        
+        body.tema-oscuro .movement-type.salida {
+            background: #4d1a1a !important;
+            color: #f87171 !important;
+        }
+        
+        body.tema-oscuro .tabs-header {
+            background: #2d2d2d !important;
+        }
+        
+        body.tema-oscuro .tab-button {
+            background: #404040 !important;
+            color: #b0b0b0 !important;
+            border-right-color: #555555 !important;
+        }
+        
+        body.tema-oscuro .tab-button:hover {
+            background: #555555 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .tab-button.active {
+            background: #3498db !important;
+            color: white !important;
+        }
+        
+        body.tema-oscuro .tab-content {
+            background: #1a1a1a !important;
+            border-color: #404040 !important;
+        }
+        
+        body.tema-oscuro .reports-container {
+            background: #1a1a1a !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .report-card {
+            background: #333333 !important;
+            border-color: #404040 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .report-card h3 {
+            color: #ffffff !important;
+            border-bottom-color: #3498db !important;
+        }
+        
+        body.tema-oscuro .stat-item {
+            background: #404040 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .stat-label {
+            color: #e0e0e0 !important;
+        }
+        
+        body.tema-oscuro .stat-value {
+            color: #3498db !important;
+        }
+        
+        body.tema-oscuro .top-item,
+        body.tema-oscuro .sede-item {
+            background: #404040 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .top-item .product-name,
+        body.tema-oscuro .sede-item .sede-name {
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .top-item .product-count {
+            background: #3498db !important;
+            color: white !important;
+        }
+        
+        body.tema-oscuro .sede-item .sede-count {
+            background: #27ae60 !important;
+            color: white !important;
+        }
+        
+        body.tema-oscuro .report-details {
+            background: #333333 !important;
+            border-color: #404040 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .report-details h3 {
+            color: #ffffff !important;
+            border-bottom-color: #3498db !important;
+        }
+        
+        body.tema-oscuro .report-movement-item {
+            background: #404040 !important;
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .report-movement-item.entrada {
+            border-left-color: #27ae60 !important;
+        }
+        
+        body.tema-oscuro .report-movement-product {
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .report-movement-details {
+            color: #b0b0b0 !important;
+        }
+        
+        body.tema-oscuro .report-movement-quantity {
+            color: #3498db !important;
+        }
+        
+        body.tema-oscuro label {
+            color: #e0e0e0 !important;
+        }
+        
+        body.tema-oscuro #sync-status {
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .btn {
+            color: #ffffff !important;
+        }
+        
+        body.tema-oscuro .btn-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+        }
+        
+                body.tema-oscuro .btn-warning {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+        }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="img/logo cis .jpg" alt="Logo CIS" class="header-logo header-logo-left">
+            <h1>SISTEMA DE INVENTARIO PAE DIGITAL</h1>
+            <p>Control de entradas y salidas de productos</p>
+            <div id="sync-status" style="position: absolute; top: 15px; right: 15px; display: flex; align-items: center; gap: 8px; font-size: 14px; color: white;">
+                <div id="connection-indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #27ae60;"></div>
+                <span id="connection-text">Conectado</span>
+            </div>
+            <button id="theme-toggle" onclick="cambiarTema()" style="position: absolute; top: 15px; right: 120px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; transition: all 0.3s ease;">
+                🌙
+            </button>
+            <img src="img/alcaldia .png" alt="Logo Alcaldía" class="header-logo header-logo-right">
+        </header>
+
+        <!-- Sistema de Pestañas -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" onclick="cambiarPestaña('inventario')">
+                    📦 Inventario
+                </button>
+                <button class="tab-button" onclick="cambiarPestaña('reportes')">
+                    📊 Reportes
+                </button>
+            </div>
+            
+            <!-- Pestaña de Inventario -->
+            <div id="tab-inventario" class="tab-content active">
+                <div class="main-content">
+                    <!-- Formulario de entrada/salida -->
+                    <div class="form-section">
+                        <h2>📝 Registrar Movimiento</h2>
+                        <form action="#" method="post" onsubmit="return registrarMovimiento(event)">
+                            <div class="form-group">
+                                <label for="productName">Nombre del Producto:</label>
+                                <div class="autocomplete-container">
+                                    <input type="text" id="productName" name="productName" required 
+                                           placeholder="Escribe el nombre del producto..." 
+                                           autocomplete="off"
+                                           oninput="filtrarProductos(this.value)"
+                                           onfocus="mostrarSugerencias()"
+                                           onblur="ocultarSugerencias()">
+                                    <div id="productSuggestions" class="suggestions-dropdown" style="display: none;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="quantity">Cantidad:</label>
+                                <input type="number" id="quantity" name="quantity" min="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="movementType">Tipo de Movimiento:</label>
+                                <select id="movementType" name="movementType" required onchange="toggleSedeField()">
+                                    <option value="entrada">➕ Entrada</option>
+                                    <option value="salida">➖ Salida</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="sedeGroup" style="display: none;">
+                                <label for="sede">Sede de Destino:</label>
+                                <select id="sede" name="sede">
+                                    <option value="">Selecciona una sede</option>
+                                    <option value="Sede Central">🏢 Sede Central</option>
+                                    <option value="Sede Norte">📍 Sede Norte</option>
+                                    <option value="Sede Sur">📍 Sede Sur</option>
+                                    <option value="Sede Este">📍 Sede Este</option>
+                                    <option value="Sede Oeste">📍 Sede Oeste</option>
+                                    <option value="Sede Centro">📍 Sede Centro</option>
+                                    <option value="Sede Industrial">🏭 Sede Industrial</option>
+                                    <option value="Sede Comercial">🛒 Sede Comercial</option>
+                                    <option value="Sede Administrativa">📋 Sede Administrativa</option>
+                                    <option value="Sede Logística">🚚 Sede Logística</option>
+                                    <option value="Sede Almacén">📦 Sede Almacén</option>
+                                    <option value="Sede Distribución">🚛 Sede Distribución</option>
+                                    <option value="Sede Retail">🛍️ Sede Retail</option>
+                                    <option value="Sede Mayorista">📦 Sede Mayorista</option>
+                                    <option value="Sede Minorista">🏪 Sede Minorista</option>
+                                    <option value="Sede Online">💻 Sede Online</option>
+                                    <option value="Sede Call Center">📞 Sede Call Center</option>
+                                    <option value="Sede Atención al Cliente">👥 Sede Atención al Cliente</option>
+                                    <option value="Sede Financiera">💰 Sede Financiera</option>
+                                    <option value="Sede Recursos Humanos">👨‍💼 Sede Recursos Humanos</option>
+                                    <option value="Sede Tecnología">💻 Sede Tecnología</option>
+                                    <option value="Sede Marketing">📢 Sede Marketing</option>
+                                    <option value="Sede Ventas">💼 Sede Ventas</option>
+                                    <option value="Sede Servicio Técnico">🔧 Sede Servicio Técnico</option>
+                                    <option value="Sede Calidad">✅ Sede Calidad</option>
+                                </select>
+                            </div>
+                            
+                                                <div class="form-group">
+                        <label for="movementMonth">Mes del Movimiento:</label>
+                        <select id="movementMonth" name="movementMonth" required>
+                            <option value="">Selecciona el mes</option>
+                            <option value="0">📅 Enero</option>
+                            <option value="1">📅 Febrero</option>
+                            <option value="2">📅 Marzo</option>
+                            <option value="3">📅 Abril</option>
+                            <option value="4">📅 Mayo</option>
+                            <option value="5">📅 Junio</option>
+                            <option value="6">📅 Julio</option>
+                            <option value="7">📅 Agosto</option>
+                            <option value="8">📅 Septiembre</option>
+                            <option value="9">📅 Octubre</option>
+                            <option value="10">📅 Noviembre</option>
+                            <option value="11">📅 Diciembre</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Descripción:</label>
+                        <textarea id="description" name="description" rows="3" placeholder="Descripción opcional del movimiento..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        💾 Registrar Movimiento
+                    </button>
+                        </form>
+                    </div>
+
+                    <!-- Inventario actual -->
+                    <div class="inventory-section">
+                        <h2>📊 Inventario Actual</h2>
+                        <div class="inventory-summary">
+                            <div class="summary-card">
+                                <div style="font-size: 2em; color: #3498db; margin-bottom: 10px;">📦</div>
+                                <h3>Total Productos</h3>
+                                <p id="totalProducts">0</p>
+                            </div>
+                            <div class="summary-card">
+                                <div style="font-size: 2em; color: #27ae60; margin-bottom: 10px;">⬆️</div>
+                                <h3>Entradas</h3>
+                                <p id="totalEntries">0</p>
+                            </div>
+                            <div class="summary-card">
+                                <div style="font-size: 2em; color: #e74c3c; margin-bottom: 10px;">⬇️</div>
+                                <h3>Salidas</h3>
+                                <p id="totalExits">0</p>
+                            </div>
+                        </div>
+                        
+                        <div class="inventory-list">
+                            <h3>📋 Productos en Stock</h3>
+                            <div id="inventoryItems" class="items-container">
+                                <p style="text-align: center; color: #7f8c8d; margin-top: 80px;">
+                                    No hay productos registrados aún.<br>
+                                    ¡Registra tu primer movimiento!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                            <!-- Historial de movimientos -->
+        <div class="history-section">
+            <h2>📜 Historial de Movimientos</h2>
+            <div class="history-filters">
+                <select id="filterType" onchange="filtrarHistorial()">
+                    <option value="todos">🔍 Todos los movimientos</option>
+                    <option value="entrada">⬆️ Solo Entradas</option>
+                    <option value="salida">⬇️ Solo Salidas</option>
+                </select>
+                <select id="filterSede" onchange="filtrarHistorial()">
+                    <option value="todas">🏢 Todas las sedes</option>
+                    <option value="Sede Central">🏢 Sede Central</option>
+                    <option value="Sede Norte">📍 Sede Norte</option>
+                    <option value="Sede Sur">📍 Sede Sur</option>
+                    <option value="Sede Este">📍 Sede Este</option>
+                    <option value="Sede Oeste">📍 Sede Oeste</option>
+                    <option value="Sede Centro">📍 Sede Centro</option>
+                    <option value="Sede Industrial">🏭 Sede Industrial</option>
+                    <option value="Sede Comercial">🛒 Sede Comercial</option>
+                    <option value="Sede Administrativa">📋 Sede Administrativa</option>
+                    <option value="Sede Logística">🚚 Sede Logística</option>
+                    <option value="Sede Almacén">📦 Sede Almacén</option>
+                    <option value="Sede Distribución">🚛 Sede Distribución</option>
+                    <option value="Sede Retail">🛍️ Sede Retail</option>
+                    <option value="Sede Mayorista">📦 Sede Mayorista</option>
+                    <option value="Sede Minorista">🏪 Sede Minorista</option>
+                    <option value="Sede Online">💻 Sede Online</option>
+                    <option value="Sede Call Center">📞 Sede Call Center</option>
+                    <option value="Sede Atención al Cliente">👥 Sede Atención al Cliente</option>
+                    <option value="Sede Financiera">💰 Sede Financiera</option>
+                    <option value="Sede Recursos Humanos">👨‍💼 Sede Recursos Humanos</option>
+                    <option value="Sede Tecnología">💻 Sede Tecnología</option>
+                    <option value="Sede Marketing">📢 Sede Marketing</option>
+                    <option value="Sede Ventas">💼 Sede Ventas</option>
+                    <option value="Sede Servicio Técnico">🔧 Sede Servicio Técnico</option>
+                    <option value="Sede Calidad">✅ Sede Calidad</option>
+                </select>
+                <button onclick="limpiarHistorial()" class="btn btn-danger">
+                    🗑️ Limpiar Historial
+                </button>
+                <button onclick="restablecerTodo()" class="btn btn-warning">
+                    🔄 Restablecer Todo
+                </button>
+                <button onclick="sincronizarManual()" class="btn" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">
+                    ☁️ Sincronizar
+                </button>
+            </div>
+                        
+                        <div id="movementHistory" class="history-container">
+                            <p style="text-align: center; color: #7f8c8d; margin-top: 120px;">
+                                No hay movimientos registrados aún.<br>
+                                ¡Comienza a registrar entradas y salidas!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pestaña de Reportes -->
+            <div id="tab-reportes" class="tab-content">
+                <div class="reports-container">
+                    <div class="report-header">
+                        <h2>📊 Reportes Mensuales</h2>
+                        <div class="report-filters">
+                             <select id="reportMonth" onchange="generarReporte()">
+                                 <option value="0">📅 Enero</option>
+                                 <option value="1">📅 Febrero</option>
+                                 <option value="2">📅 Marzo</option>
+                                 <option value="3">📅 Abril</option>
+                                 <option value="4">📅 Mayo</option>
+                                 <option value="5">📅 Junio</option>
+                                 <option value="6">📅 Julio</option>
+                                 <option value="7">📅 Agosto</option>
+                                 <option value="8">📅 Septiembre</option>
+                                 <option value="9">📅 Octubre</option>
+                                 <option value="10">📅 Noviembre</option>
+                                 <option value="11">📅 Diciembre</option>
+                             </select>
+                        </div>
+                    </div>
+                    
+                    <div class="report-summary">
+                        <div class="report-card">
+                            <h3>📈 Resumen del Mes</h3>
+                            <div class="report-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Entradas:</span>
+                                    <span class="stat-value" id="reportEntradas">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Salidas:</span>
+                                    <span class="stat-value" id="reportSalidas">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Productos Únicos:</span>
+                                    <span class="stat-value" id="reportProductosUnicos">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Sedes Activas:</span>
+                                    <span class="stat-value" id="reportSedesActivas">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>🏆 Top Productos</h3>
+                            <div id="topProductos" class="top-list">
+                                <p style="text-align: center; color: #7f8c8d;">No hay datos para mostrar</p>
+                            </div>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>📍 Actividad por Sede</h3>
+                            <div id="actividadSedes" class="sede-activity">
+                                <p style="text-align: center; color: #7f8c8d;">No hay datos para mostrar</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-details">
+                        <h3>📋 Detalle de Movimientos</h3>
+                        <div id="reportMovimientos" class="report-movements">
+                            <p style="text-align: center; color: #7f8c8d;">Selecciona un mes para ver el detalle</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales para almacenar datos
+        let inventario = {};
+        let historial = [];
+        let contadores = { entradas: 0, salidas: 0 };
+
+        // Variables para autocompletado
+        let sugerenciasVisibles = false;
+        let sugerenciasActuales = [];
+        let indiceSeleccionado = -1;
+
+        // Función para mostrar/ocultar campo de sede
+        function toggleSedeField() {
+            const movementType = document.getElementById('movementType').value;
+            const sedeGroup = document.getElementById('sedeGroup');
+            const sedeSelect = document.getElementById('sede');
+            
+            if (movementType === 'salida') {
+                sedeGroup.style.display = 'block';
+                sedeSelect.required = true;
+            } else {
+                sedeGroup.style.display = 'none';
+                sedeSelect.required = false;
+                sedeSelect.value = '';
+            }
+        }
+
+        // Función para filtrar productos y mostrar sugerencias
+        function filtrarProductos(texto) {
+            const input = document.getElementById('productName');
+            const dropdown = document.getElementById('productSuggestions');
+            
+            if (texto.length < 2) {
+                dropdown.style.display = 'none';
+                sugerenciasVisibles = false;
+                return;
+            }
+            
+            // Obtener productos existentes
+            const productosExistentes = Object.keys(inventario);
+            
+            // Filtrar productos que coincidan con el texto
+            const coincidencias = productosExistentes.filter(producto => 
+                producto.toLowerCase().includes(texto.toLowerCase())
+            );
+            
+            // Crear sugerencias
+            sugerenciasActuales = [];
+            
+            // Agregar productos existentes
+            coincidencias.forEach(producto => {
+                sugerenciasActuales.push({
+                    nombre: producto,
+                    stock: inventario[producto],
+                    esNuevo: false
+                });
+            });
+            
+            // Agregar opción para crear nuevo producto si no hay coincidencias exactas
+            if (coincidencias.length === 0 || !coincidencias.some(p => p.toLowerCase() === texto.toLowerCase())) {
+                sugerenciasActuales.push({
+                    nombre: texto,
+                    stock: 0,
+                    esNuevo: true
+                });
+            }
+            
+            mostrarSugerencias();
+        }
+
+        // Función para mostrar las sugerencias
+        function mostrarSugerencias() {
+            const dropdown = document.getElementById('productSuggestions');
+            const input = document.getElementById('productName');
+            
+            if (sugerenciasActuales.length === 0) {
+                dropdown.style.display = 'none';
+                sugerenciasVisibles = false;
+                return;
+            }
+            
+            dropdown.innerHTML = '';
+            sugerenciasActuales.forEach((sugerencia, index) => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.onclick = () => seleccionarProducto(sugerencia.nombre);
+                item.onmouseenter = () => resaltarSugerencia(index);
+                
+                if (sugerencia.esNuevo) {
+                    item.innerHTML = `
+                        <div class="product-name new-product">✨ ${sugerencia.nombre}</div>
+                        <div class="product-stock">Nuevo producto</div>
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <div class="product-name">${sugerencia.nombre}</div>
+                        <div class="product-stock">Stock actual: ${sugerencia.stock} unidades</div>
+                    `;
+                }
+                
+                dropdown.appendChild(item);
+            });
+            
+            dropdown.style.display = 'block';
+            sugerenciasVisibles = true;
+            indiceSeleccionado = -1;
+        }
+
+        // Función para ocultar las sugerencias
+        function ocultarSugerencias() {
+            // Pequeño delay para permitir que el click funcione
+            setTimeout(() => {
+                const dropdown = document.getElementById('productSuggestions');
+                dropdown.style.display = 'none';
+                sugerenciasVisibles = false;
+                indiceSeleccionado = -1;
+            }, 200);
+        }
+
+        // Función para seleccionar un producto
+        function seleccionarProducto(nombre) {
+            document.getElementById('productName').value = nombre;
+            ocultarSugerencias();
+        }
+
+        // Función para resaltar sugerencia con hover
+        function resaltarSugerencia(index) {
+            const items = document.querySelectorAll('.suggestion-item');
+            items.forEach((item, i) => {
+                item.classList.remove('selected');
+                if (i === index) {
+                    item.classList.add('selected');
+                    indiceSeleccionado = index;
+                }
+            });
+        }
+
+        // Función para manejar navegación con teclado
+        function manejarTeclado(event) {
+            if (!sugerenciasVisibles) return;
+            
+            const dropdown = document.getElementById('productSuggestions');
+            const items = dropdown.querySelectorAll('.suggestion-item');
+            
+            switch(event.key) {
+                case 'ArrowDown':
+                    event.preventDefault();
+                    indiceSeleccionado = Math.min(indiceSeleccionado + 1, items.length - 1);
+                    resaltarSugerencia(indiceSeleccionado);
+                    break;
+                    
+                case 'ArrowUp':
+                    event.preventDefault();
+                    indiceSeleccionado = Math.max(indiceSeleccionado - 1, -1);
+                    if (indiceSeleccionado >= 0) {
+                        resaltarSugerencia(indiceSeleccionado);
+                    } else {
+                        items.forEach(item => item.classList.remove('selected'));
+                    }
+                    break;
+                    
+                case 'Enter':
+                    event.preventDefault();
+                    if (indiceSeleccionado >= 0 && sugerenciasActuales[indiceSeleccionado]) {
+                        seleccionarProducto(sugerenciasActuales[indiceSeleccionado].nombre);
+                    }
+                    break;
+                    
+                case 'Escape':
+                    ocultarSugerencias();
+                    break;
+            }
+        }
+
+                // Función para registrar un movimiento
+        function registrarMovimiento(event) {
+            event.preventDefault();
+            
+            const productName = document.getElementById('productName').value.trim();
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const movementType = document.getElementById('movementType').value;
+            const sede = document.getElementById('sede').value;
+            const movementMonth = document.getElementById('movementMonth').value;
+            const description = document.getElementById('description').value.trim();
+            
+            // Validar que se haya seleccionado un mes
+            if (!movementMonth) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Mes Requerido',
+                    text: 'Por favor selecciona el mes del movimiento.',
+                    confirmButtonColor: '#3498db'
+                });
+                return false;
+            }
+            
+            // Validar que se haya seleccionado una sede para salidas
+            if (movementType === 'salida' && !sede) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sede Requerida',
+                    text: 'Por favor selecciona una sede de destino para las salidas.',
+                    confirmButtonColor: '#3498db'
+                });
+                return false;
+            }
+            
+            // Validar stock para salidas
+            if (movementType === 'salida') {
+                if (!inventario[productName] || inventario[productName] < quantity) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Stock Insuficiente',
+                        html: `No hay suficiente stock para <strong>${productName}</strong><br><br>Stock disponible: <strong>${inventario[productName] || 0}</strong> unidades`,
+                        confirmButtonColor: '#e74c3c'
+                    });
+                    return false;
+                }
+            }
+            
+            // Crear fecha con el mes seleccionado
+            const now = new Date();
+            const selectedMonth = parseInt(movementMonth);
+            const movementDate = new Date(now.getFullYear(), selectedMonth, now.getDate(), now.getHours(), now.getMinutes());
+            
+            // Crear el movimiento
+            const movimiento = {
+                id: Date.now(),
+                producto: productName,
+                cantidad: quantity,
+                tipo: movementType,
+                sede: sede || 'N/A',
+                descripcion: description || 'Sin descripción',
+                fecha: movementDate.toISOString(),
+                mes: selectedMonth,
+                mesNombre: obtenerNombreMes(selectedMonth),
+                stockRestante: 0
+            };
+            
+            // Actualizar inventario
+            if (movementType === 'entrada') {
+                if (inventario[productName]) {
+                    inventario[productName] += quantity;
+                } else {
+                    inventario[productName] = quantity;
+                }
+                contadores.entradas++;
+            } else {
+                inventario[productName] -= quantity;
+                contadores.salidas++;
+                
+                // Si el stock llega a 0, eliminar del inventario
+                if (inventario[productName] <= 0) {
+                    delete inventario[productName];
+                }
+            }
+
+            // Guardar stock restante en el movimiento
+            movimiento.stockRestante = inventario[productName] || 0;
+            
+            // Agregar al historial
+            historial.unshift(movimiento);
+            
+            // Guardar datos
+            guardarDatos();
+            
+            // Actualizar interfaz
+            actualizarInterfaz();
+            mostrarHistorial();
+            
+            // Limpiar formulario
+            document.getElementById('productName').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('movementType').value = 'entrada';
+            document.getElementById('sede').value = '';
+            document.getElementById('movementMonth').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('sedeGroup').style.display = 'none';
+            
+            // Mostrar mensaje de confirmación
+            const tipoTexto = movementType === 'entrada' ? 'Entrada' : 'Salida';
+            const mesTexto = obtenerNombreMes(selectedMonth);
+            Swal.fire({
+                icon: 'success',
+                title: 'Movimiento Registrado',
+                html: `<strong>${tipoTexto}</strong> registrada exitosamente<br><br><strong>Producto:</strong> ${productName}<br><strong>Mes:</strong> ${mesTexto}`,
+                confirmButtonColor: '#27ae60',
+                timer: 3000,
+                timerProgressBar: true
+            });
+            
+            return false;
+        }
+
+        // Función para actualizar la interfaz
+        function actualizarInterfaz() {
+            // Actualizar contadores
+            document.getElementById('totalProducts').textContent = Object.keys(inventario).length;
+            document.getElementById('totalEntries').textContent = contadores.entradas;
+            document.getElementById('totalExits').textContent = contadores.salidas;
+            
+            // Actualizar lista de inventario
+            const container = document.getElementById('inventoryItems');
+            if (Object.keys(inventario).length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d; margin-top: 80px;">No hay productos registrados aún.<br>¡Registra tu primer movimiento!</p>';
+            } else {
+                container.innerHTML = '';
+                Object.entries(inventario).forEach(([producto, cantidad]) => {
+                    const item = document.createElement('div');
+                    item.className = 'product-item';
+                    item.innerHTML = `
+                        <h4>${producto}</h4>
+                        <p><strong>Stock:</strong> ${cantidad} unidades</p>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+            
+            // Actualizar historial
+            mostrarHistorial();
+        }
+
+        // Función para mostrar el historial
+        function mostrarHistorial() {
+            const container = document.getElementById('movementHistory');
+            const filtroTipo = document.getElementById('filterType').value;
+            const filtroSede = document.getElementById('filterSede').value;
+            
+            if (historial.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d; margin-top: 120px;">No hay movimientos registrados aún.<br>¡Comienza a registrar entradas y salidas!</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            historial.forEach(movimiento => {
+                // Aplicar filtros
+                const cumpleTipo = filtroTipo === 'todos' || movimiento.tipo === filtroTipo;
+                const cumpleSede = filtroSede === 'todas' || movimiento.sede === filtroSede;
+                
+                if (cumpleTipo && cumpleSede) {
+                    let fechaTexto = movimiento.fecha;
+                    try {
+                        const f = new Date(movimiento.fecha);
+                        if (!isNaN(f)) {
+                            fechaTexto = f.toLocaleString('es-ES');
+                        }
+                    } catch (e) {}
+                    const item = document.createElement('div');
+                    item.className = `movement-item ${movimiento.tipo}`;
+                    item.innerHTML = `
+                        <div class="movement-date">📅 ${fechaTexto}</div>
+                        <h4>${movimiento.producto}</h4>
+                        <p><strong>Cantidad:</strong> ${movimiento.cantidad} unidades</p>
+                        <p><strong>Tipo:</strong> <span class="movement-type ${movimiento.tipo}">${movimiento.tipo}</span></p>
+                        ${movimiento.descripcion ? `<p><strong>Descripción:</strong> ${movimiento.descripcion}</p>` : ''}
+                        ${movimiento.sede && movimiento.sede !== 'N/A' ? `<p><strong>📍 Sede:</strong> ${movimiento.sede}</p>` : ''}
+                        <p><strong>Stock restante:</strong> ${movimiento.stockRestante} unidades</p>
+                    `;
+                    container.appendChild(item);
+                }
+            });
+        }
+
+        // Función para filtrar historial
+        function filtrarHistorial() {
+            mostrarHistorial();
+        }
+
+        // Función para limpiar historial
+        async function limpiarHistorial() {
+            const { value: clave } = await Swal.fire({
+                title: '🔐 Autenticación Requerida',
+                text: 'Ingresa la clave de administrador para eliminar el historial:',
+                input: 'password',
+                inputPlaceholder: 'Ingresa la clave...',
+                showCancelButton: true,
+                confirmButtonText: 'Continuar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#95a5a6',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Debes ingresar una clave';
+                    }
+                }
+            });
+            
+            if (clave === 'PAE2025') {
+                const result = await Swal.fire({
+                    icon: 'warning',
+                    title: '⚠️ Confirmar Eliminación',
+                    html: '¿Estás seguro de que quieres limpiar todo el historial?<br><br><strong>Esta acción no se puede deshacer.</strong>',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, Eliminar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#e74c3c',
+                    cancelButtonColor: '#95a5a6'
+                });
+                
+                if (result.isConfirmed) {
+                    historial = [];
+                    guardarDatos();
+                    mostrarHistorial();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Historial Eliminado',
+                        text: 'El historial ha sido limpiado exitosamente',
+                        confirmButtonColor: '#27ae60',
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                }
+            } else if (clave !== undefined) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Clave Incorrecta',
+                    text: 'No tienes permisos para realizar esta acción',
+                    confirmButtonColor: '#e74c3c'
+                });
+            }
+        }
+
+        // Función para guardar datos (local + nube)
+        async function guardarDatos() {
+            // Guardar localmente primero
+            guardarDatosLocal();
+            
+            // Intentar guardar en la nube si hay conexión
+            if (verificarConectividad()) {
+                await guardarEnFirebase();
+            }
+        }
+
+        // Función para guardar solo en localStorage
+        function guardarDatosLocal() {
+            localStorage.setItem('inventario', JSON.stringify(inventario));
+            localStorage.setItem('historial', JSON.stringify(historial));
+            localStorage.setItem('contadores', JSON.stringify(contadores));
+        }
+
+        // Función para cargar datos (local + nube)
+        async function cargarDatos() {
+            // Cargar desde localStorage primero
+            cargarDatosLocal();
+            
+            // Intentar cargar desde la nube si hay conexión
+            if (verificarConectividad()) {
+                const exitoNube = await cargarDesdeFirebase();
+                if (exitoNube) {
+                    // Si se cargaron datos de la nube, actualizar la interfaz
+                    actualizarInterfaz();
+                    mostrarHistorial();
+                }
+            }
+        }
+
+        // Función para cargar solo desde localStorage
+        function cargarDatosLocal() {
+            try {
+                const inventarioGuardado = localStorage.getItem('inventario');
+                const historialGuardado = localStorage.getItem('historial');
+                const contadoresGuardados = localStorage.getItem('contadores');
+                
+                if (inventarioGuardado) inventario = JSON.parse(inventarioGuardado);
+                if (historialGuardado) historial = JSON.parse(historialGuardado);
+                if (contadoresGuardados) contadores = JSON.parse(contadoresGuardados);
+            } catch (error) {
+                console.error('Error al cargar datos locales:', error);
+            }
+        }
+
+        // Función para sincronización manual
+        async function sincronizarManual() {
+            if (!verificarConectividad()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin Conexión',
+                    text: 'No hay conexión a internet. Los datos se guardan localmente.',
+                    confirmButtonColor: '#f39c12'
+                });
+                return;
+            }
+            
+            await guardarEnFirebase();
+        }
+
+        // Función para verificar conectividad
+        function verificarConectividad() {
+            return navigator.onLine;
+        }
+
+        // Función para cambiar entre tema claro y oscuro
+        function cambiarTema() {
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            if (body.classList.contains('tema-oscuro')) {
+                // Cambiar a tema claro
+                body.classList.remove('tema-oscuro');
+                body.classList.add('tema-claro');
+                themeToggle.innerHTML = '🌙';
+                localStorage.setItem('tema', 'claro');
+            } else {
+                // Cambiar a tema oscuro
+                body.classList.remove('tema-claro');
+                body.classList.add('tema-oscuro');
+                themeToggle.innerHTML = '☀️';
+                localStorage.setItem('tema', 'oscuro');
+            }
+        }
+
+        // Función para cargar el tema guardado
+        function cargarTema() {
+            const temaGuardado = localStorage.getItem('tema');
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            if (temaGuardado === 'oscuro') {
+                body.classList.add('tema-oscuro');
+                themeToggle.innerHTML = '☀️';
+            } else if (temaGuardado === 'claro') {
+                body.classList.add('tema-claro');
+                themeToggle.innerHTML = '🌙';
+            } else {
+                // Si no hay tema guardado, usar el del sistema
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    body.classList.add('tema-oscuro');
+                    themeToggle.innerHTML = '☀️';
+                } else {
+                    body.classList.add('tema-claro');
+                    themeToggle.innerHTML = '🌙';
+                }
+            }
+        }
+
+        // Cargar datos al iniciar la página
+        window.onload = function() {
+            cargarDatos();
+            actualizarInterfaz();
+            
+            // Cargar tema
+            cargarTema();
+            
+            // Agregar event listener para navegación con teclado
+            document.getElementById('productName').addEventListener('keydown', manejarTeclado);
+            
+            // Cerrar sugerencias al hacer click fuera del campo
+            document.addEventListener('click', function(event) {
+                const container = document.querySelector('.autocomplete-container');
+                if (!container.contains(event.target)) {
+                    ocultarSugerencias();
+                }
+            });
+            
+            // Mejorar experiencia móvil
+            mejorarExperienciaMovil();
+
+            // Preseleccionar el mes actual en reportes y en el formulario de registro
+            const mesActual = new Date().getMonth();
+            const reportMonth = document.getElementById('reportMonth');
+            if (reportMonth) reportMonth.value = String(mesActual);
+            const movementMonth = document.getElementById('movementMonth');
+            if (movementMonth) movementMonth.value = String(mesActual);
+            
+            // Configurar indicadores de conectividad
+            configurarIndicadoresConectividad();
+        };
+
+        // Función para configurar indicadores de conectividad
+        function configurarIndicadoresConectividad() {
+            const indicator = document.getElementById('connection-indicator');
+            const text = document.getElementById('connection-text');
+            
+            function actualizarEstado() {
+                const conectado = verificarConectividad();
+                if (conectado) {
+                    indicator.style.background = '#27ae60';
+                    text.textContent = 'Conectado';
+                } else {
+                    indicator.style.background = '#e74c3c';
+                    text.textContent = 'Sin conexión';
+                }
+            }
+            
+            // Actualizar estado inicial
+            actualizarEstado();
+            
+            // Escuchar cambios de conectividad
+            window.addEventListener('online', actualizarEstado);
+            window.addEventListener('offline', actualizarEstado);
+        }
+
+        // Función para mejorar la experiencia en dispositivos móviles
+        function mejorarExperienciaMovil() {
+            // Detectar si es dispositivo táctil
+            const esTactil = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            
+            if (esTactil) {
+                // Agregar eventos táctiles para mejor respuesta
+                document.addEventListener('touchstart', function() {}, {passive: true});
+                
+                // Mejorar scroll en móviles
+                const containers = document.querySelectorAll('.suggestions-dropdown, .history-container, .items-container');
+                containers.forEach(container => {
+                    container.style.webkitOverflowScrolling = 'touch';
+                });
+                
+                // Ajustar tamaño de elementos táctiles
+                const elementosTactiles = document.querySelectorAll('.btn, .suggestion-item, input, select, textarea');
+                elementosTactiles.forEach(elemento => {
+                    elemento.style.minHeight = '44px';
+                    elemento.style.touchAction = 'manipulation';
+                });
+            }
+            
+            // Detectar orientación del dispositivo
+            window.addEventListener('orientationchange', function() {
+                setTimeout(function() {
+                    // Reajustar layout después del cambio de orientación
+                    if (window.innerWidth < 768) {
+                        document.body.style.minHeight = window.innerHeight + 'px';
+                    }
+                }, 100);
+            });
+            
+            // Ajustar altura en móviles
+            if (window.innerWidth < 768) {
+                document.body.style.minHeight = window.innerHeight + 'px';
+            }
+        }
+        
+        // Función para cambiar entre pestañas
+        function cambiarPestaña(pestaña) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Desactivar todos los botones
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar la pestaña seleccionada
+            document.getElementById(`tab-${pestaña}`).classList.add('active');
+            
+            // Activar el botón correspondiente
+            event.target.classList.add('active');
+            
+            // Si es la pestaña de reportes, generar el reporte
+            if (pestaña === 'reportes') {
+                generarReporte();
+            }
+        }
+        
+        // Función para restablecer todo (inventario, historial y contadores)
+        async function restablecerTodo() {
+            const { value: clave } = await Swal.fire({
+                title: '🔐 Autenticación Requerida',
+                text: 'Ingresa la clave de administrador para restablecer todo:',
+                input: 'password',
+                inputPlaceholder: 'Ingresa la clave...',
+                showCancelButton: true,
+                confirmButtonText: 'Continuar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#f39c12',
+                cancelButtonColor: '#95a5a6',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Debes ingresar una clave';
+                    }
+                }
+            });
+            
+            if (clave === 'PAE2025') {
+                const result = await Swal.fire({
+                    icon: 'warning',
+                    title: '⚠️ Confirmar Restablecimiento',
+                    html: '¿Estás seguro de que quieres restablecer TODO?<br><br>Esto eliminará:<br>• Todo el inventario<br>• Todo el historial<br>• Todos los contadores<br><br><strong>Esta acción NO se puede deshacer.</strong>',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, Restablecer',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#f39c12',
+                    cancelButtonColor: '#95a5a6'
+                });
+                
+                if (result.isConfirmed) {
+                    // Limpiar inventario
+                    inventario = {};
+                    
+                    // Limpiar historial
+                    historial = [];
+                    
+                    // Resetear contadores
+                    contadores = { entradas: 0, salidas: 0 };
+                    
+                    // Guardar en localStorage
+                    guardarDatos();
+                    
+                    // Actualizar interfaz
+                    actualizarInterfaz();
+                    mostrarHistorial();
+                    
+                    // Mostrar mensaje de confirmación
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sistema Restablecido',
+                        html: 'Todo ha sido restablecido correctamente.<br><br>El sistema está listo para comenzar desde cero.',
+                        confirmButtonColor: '#27ae60',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                }
+            } else if (clave !== undefined) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Clave Incorrecta',
+                    text: 'No tienes permisos para realizar esta acción',
+                    confirmButtonColor: '#e74c3c'
+                });
+            }
+        }
+        
+        // Función para generar reportes mensuales
+        function generarReporte() {
+            const mesSeleccionado = parseInt(document.getElementById('reportMonth').value);
+            const ahora = new Date();
+            const fechaInicio = new Date(ahora.getFullYear(), mesSeleccionado, 1);
+            const fechaFin = new Date(ahora.getFullYear(), mesSeleccionado + 1, 0);
+
+            const movimientosPeriodo = historial.filter(mov => {
+                const fechaMov = new Date(mov.fecha);
+                return fechaMov >= fechaInicio && fechaMov <= fechaFin;
+            });
+
+            generarEstadisticasReporte(movimientosPeriodo, fechaInicio, fechaFin);
+        }
+        
+        // Función para generar estadísticas del reporte
+        function generarEstadisticasReporte(movimientos, fechaInicio, fechaFin) {
+            // Contadores básicos
+            let totalEntradas = 0;
+            let totalSalidas = 0;
+            let productosUnicos = new Set();
+            let sedesActivas = new Set();
+            let productosCount = {};
+            let sedesCount = {};
+            
+            // Procesar movimientos
+            movimientos.forEach(mov => {
+                if (mov.tipo === 'entrada') {
+                    totalEntradas += mov.cantidad;
+                } else {
+                    totalSalidas += mov.cantidad;
+                }
+                
+                productosUnicos.add(mov.producto);
+                if (mov.sede && mov.sede !== 'N/A') {
+                    sedesActivas.add(mov.sede);
+                }
+                
+                // Contar productos
+                if (!productosCount[mov.producto]) {
+                    productosCount[mov.producto] = 0;
+                }
+                productosCount[mov.producto] += mov.cantidad;
+                
+                // Contar sedes
+                if (mov.sede && mov.sede !== 'N/A') {
+                    if (!sedesCount[mov.sede]) {
+                        sedesCount[mov.sede] = 0;
+                    }
+                    sedesCount[mov.sede]++;
+                }
+            });
+            
+            // Actualizar resumen
+            document.getElementById('reportEntradas').textContent = totalEntradas;
+            document.getElementById('reportSalidas').textContent = totalSalidas;
+            document.getElementById('reportProductosUnicos').textContent = productosUnicos.size;
+            document.getElementById('reportSedesActivas').textContent = sedesActivas.size;
+            
+            // Generar top productos
+            generarTopProductos(productosCount);
+            
+            // Generar actividad por sedes
+            generarActividadSedes(sedesCount);
+            
+            // Generar detalle de movimientos
+            generarDetalleMovimientos(movimientos);
+        }
+        
+        // Función para generar top productos
+        function generarTopProductos(productosCount) {
+            const topProductos = document.getElementById('topProductos');
+            
+            if (Object.keys(productosCount).length === 0) {
+                topProductos.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No hay datos para mostrar</p>';
+                return;
+            }
+            
+            // Ordenar productos por cantidad
+            const productosOrdenados = Object.entries(productosCount)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5); // Top 5
+            
+            let html = '';
+            productosOrdenados.forEach(([producto, cantidad], index) => {
+                const emoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '📦';
+                html += `
+                    <div class="top-item">
+                        <span class="product-name">${emoji} ${producto}</span>
+                        <span class="product-count">${cantidad}</span>
+                    </div>
+                `;
+            });
+            
+            topProductos.innerHTML = html;
+        }
+        
+        // Función para generar actividad por sedes
+        function generarActividadSedes(sedesCount) {
+            const actividadSedes = document.getElementById('actividadSedes');
+            
+            if (Object.keys(sedesCount).length === 0) {
+                actividadSedes.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No hay datos para mostrar</p>';
+                return;
+            }
+            
+            // Ordenar sedes por actividad
+            const sedesOrdenadas = Object.entries(sedesCount)
+                .sort(([,a], [,b]) => b - a);
+            
+            let html = '';
+            sedesOrdenadas.forEach(([sede, cantidad]) => {
+                html += `
+                    <div class="sede-item">
+                        <span class="sede-name">📍 ${sede}</span>
+                        <span class="sede-count">${cantidad}</span>
+                    </div>
+                `;
+            });
+            
+            actividadSedes.innerHTML = html;
+        }
+        
+        // Función para generar detalle de movimientos
+        function generarDetalleMovimientos(movimientos) {
+            const reportMovimientos = document.getElementById('reportMovimientos');
+            
+            if (movimientos.length === 0) {
+                reportMovimientos.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No hay movimientos en este período</p>';
+                return;
+            }
+            
+            let html = '';
+            movimientos.forEach(mov => {
+                const fecha = new Date(mov.fecha).toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const tipoClase = mov.tipo === 'entrada' ? 'entrada' : 'salida';
+                const tipoEmoji = mov.tipo === 'entrada' ? '⬆️' : '⬇️';
+                
+                html += `
+                    <div class="report-movement-item ${tipoClase}">
+                        <div class="report-movement-info">
+                            <div class="report-movement-product">${tipoEmoji} ${mov.producto}</div>
+                            <div class="report-movement-details">
+                                📅 ${fecha} | 📍 ${mov.sede || 'N/A'} | 📝 ${mov.descripcion || 'Sin descripción'}
+                            </div>
+                        </div>
+                        <div class="report-movement-quantity">${mov.cantidad}</div>
+                    </div>
+                `;
+            });
+            
+            reportMovimientos.innerHTML = html;
+        }
+
+        // Función auxiliar para obtener el nombre del mes
+        function obtenerNombreMes(mesIndex) {
+            const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+            return meses[mesIndex] || '';
+        }
+    </script>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- Configuración de Firebase -->
+    <script src="firebase-config.js"></script>
+    <script src="firebase-sync.js"></script>
+</body>
+</html>
